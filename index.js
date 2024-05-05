@@ -1,4 +1,6 @@
 require('colors');
+// asyncErrors to errorHandler
+require('express-async-errors');
 const express = require('express');
 const app = express();
 // Configurations
@@ -8,6 +10,18 @@ const HOST = process.env.HOST || '127.0.0.1';
 
 // Connect to the database
 require('./config/db')();
+
+// Middlewares
+// Accept/parse JSON request req.body
+app.use(express.json());
+
+// Home Path
+app.all('/', (req, res) => {
+    res.status(200).json({
+        success:true,
+        message:'Welcome to the FamilyTraditionsAPI'
+    })
+});
 
 // Routes
 app.use('/api', require('./routes'));

@@ -11,3 +11,5 @@ router.route('/:id')
 .put(userCntrl.update)
 .patch(userCntrl.update)
 .delete(userCntrl.delete);
+
+module.exports = router;
