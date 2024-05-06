@@ -15,6 +15,9 @@ require('./config/db')();
 // Accept/parse JSON request req.body
 app.use(express.json());
 
+// Logger middleware
+app.use(require('./middlewares/logger'));
+
 // Home Path
 app.all('/', (req, res) => {
     res.status(200).json({
@@ -25,6 +28,9 @@ app.all('/', (req, res) => {
 
 // Routes
 app.use('/api', require('./routes'));
+
+// Express Error Handler
+app.use(require('./middlewares/errorHandler'));
 
 // Run the server
 app.listen(PORT, console.log('Server is running on http://'+HOST+':'+PORT+'...'.green));
