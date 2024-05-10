@@ -2,7 +2,7 @@
 breakdown of what each part of the code is doing: */
 const {Schema, model} = require('mongoose');
 
-// const {compare, genSalt, hash} = require('bcryptjs');
+const {compare, genSalt, hash} = require('bcryptjs');
 // const bcrypt = require('bcryptjs')
 
 
@@ -55,14 +55,14 @@ const userSchema = new Schema({
 
 }, {timestamps:true});
 
-// userSchema.pre('save', async function(next){
-//     if (!this.isModified('password')) {
-//         return next();
-//     }
-//     const salt = await bcrypt.genSalt(12);
-//     this.password = await bcrypt.hash(this.password, salt);
-//     next();
-// })
+userSchema.pre('save', async function(next){
+    if (!this.isModified('password')) {
+        return next();
+    }
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+})
 
 userSchema.methods.matchPassword = async function(enteredPassword){
     console.log(this);
@@ -73,6 +73,7 @@ userSchema.methods.matchPassword = async function(enteredPassword){
     // console.log(await compare(enteredPassword, this.password));
     console.log(enteredPassword === this.password);
     // return compare(enteredPassword, this.password)
+    // return await compare(enteredPassword, this.password)
     return enteredPassword === this.password;
     // return compare(enteredPassword, this.password);
     // bcrypt.compare('mypassword', hash, function(err, result) {
