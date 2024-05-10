@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const recipeBookCtrl = require('../controllers/recipe_book');
 const {isLogin} = require('../middlewares/auth');
-
 router.use(isLogin)
 
 router.route('/')

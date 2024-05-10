@@ -10,7 +10,7 @@ exports.list = async(req, res) => {
     });
 }
 
-// 1. URL POST + /api/recipe_books
+// 2. URL POST + /api/recipe_books
 exports.create = async(req, res) => {
      const data = await RecipeBook.create(req.body);
      res.status(201).json({
