@@ -1,9 +1,5 @@
-/* This JavaScript code is setting up a router using Express.js for handling different API endpoints
-related to authentication, users, recipe books, and recipes. Here's a breakdown of what each part
-does: */
 const router = require('express').Router();
 const {auth} = require('../middlewares/auth');
-
 
 // EndPoint : /api/auth
 router.use('/auth', require('./auth'));
