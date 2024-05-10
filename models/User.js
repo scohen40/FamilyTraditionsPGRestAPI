@@ -1,5 +1,10 @@
+/* This code snippet is defining a Mongoose schema for a user in a Node.js application. Here's a
+breakdown of what each part of the code is doing: */
 const {Schema, model} = require('mongoose');
-const {compare, genSalt, hash} = require('bcryptjs');
+
+// const {compare, genSalt, hash} = require('bcryptjs');
+// const bcrypt = require('bcryptjs')
+
 
 const userSchema = new Schema({
     userId:{ 
@@ -38,23 +43,47 @@ const userSchema = new Schema({
         default:'https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png',
         match:[/^https?:\/\/.*/, 'URL is not valid']
     },
-    isActive:{
-        type:Boolean,
-        default:true
-    },
     isAdmin:{
         type:Boolean,
         default:false
+    },
+    isActive:{
+        type:Boolean,
+        required: true,
+        default:true
     }
 
 }, {timestamps:true});
 
-userSchema.pre('save', async function(next){
-    const salt = await genSalt(12);
-    this.password = await hash(this.password, salt);
-});
+// userSchema.pre('save', async function(next){
+//     if (!this.isModified('password')) {
+//         return next();
+//     }
+//     const salt = await bcrypt.genSalt(12);
+//     this.password = await bcrypt.hash(this.password, salt);
+//     next();
+// })
 
-userSchema.methods.matchPassword = async function(password){
-    return await compare(password, this.password);
+userSchema.methods.matchPassword = async function(enteredPassword){
+    console.log(this);
+    console.log('entered password');
+    console.log(enteredPassword);
+    console.log('this password');
+    console.log(this.password);
+    // console.log(await compare(enteredPassword, this.password));
+    console.log(enteredPassword === this.password);
+    // return compare(enteredPassword, this.password)
+    return enteredPassword === this.password;
+    // return compare(enteredPassword, this.password);
+    // bcrypt.compare('mypassword', hash, function(err, result) {
+    //     if (err) { throw (err); }
+    //     console.log(result);
+    //     });
+    //     });
 }
+
+// userSchema.methods.matchPassword = async function(enteredPassword){
+//     return await bcrypt.compare(enteredPassword, this.password);
+// }
+
 module.exports = model('User', userSchema);

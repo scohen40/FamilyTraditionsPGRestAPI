@@ -17,6 +17,8 @@ app.use(express.json());
 
 // Logger middleware
 app.use(require('./middlewares/logger'));
+// Authentication
+// app.use(require('./middlewares/auth'));
 
 // Home Path
 app.all('/', (req, res) => {

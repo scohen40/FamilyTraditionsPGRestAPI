@@ -40,7 +40,7 @@ exports.update = async(req, res) => {
 // 5. URL DELETE + /api/users/:id
 exports.delete = async(req, res) => {
     const data = await User.deleteOne({_id:req.params.id});
-    res.status(data.deleteCount ? 204 : 404).json({
-        success: data.deleteCount ? true : false
+    res.status(data.deletedCount ? 204 : 404).json({
+        success: data.deletedCount ? true : false
     });
 }

@@ -1,15 +1,17 @@
 const router = require('express').Router();
-const userCntrl = require('../controllers/user');
+const userCtrl = require('../controllers/user');
 
+const {isAdmin} = require('../middlewares/auth');
+router.use(isAdmin);
 
 router.route('/')
-.get(userCntrl.list)
-.post(userCntrl.create);
+.get(userCtrl.list)
+.post(userCtrl.create);
 
 router.route('/:id')
-.get(userCntrl.read)
-.put(userCntrl.update)
-.patch(userCntrl.update)
-.delete(userCntrl.delete);
+.get(userCtrl.read)
+.put(userCtrl.update)
+.patch(userCtrl.update)
+.delete(userCtrl.delete);
 
 module.exports = router;
