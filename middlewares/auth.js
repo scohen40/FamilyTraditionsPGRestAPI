@@ -47,13 +47,6 @@ exports.isAdmin = (req, res, next) => {
   }
 };
 
-// exports.isStaffOrAdmin = (req, res, next) => {
-//   if (req.user.isAdmin || req.user.isStaff) {
-//     next();
-//   } else {
-//     throw new ErrorResponse(403, "Staff or Admin login required");
-//   }
-// };
 
 // exports.isOwner = (req, res, next) => {
 //   if (req.user._id.toString() === req.body.owner_id) {

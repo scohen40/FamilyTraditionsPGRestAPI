@@ -10,9 +10,10 @@ exports.list = async(req, res) => {
     });
 }
 
-// 1. URL POST + /api/recipe_books
+// 2. URL POST + /api/recipe_books
 exports.create = async(req, res) => {
-     const data = await RecipeBook.create(req.body);
+     const userId = req.user.id; // Assuming the user id is available in req.user.id
+     const data = await RecipeBook.create({ ...req.body, userId });
      res.status(201).json({
          success:true,
          data
