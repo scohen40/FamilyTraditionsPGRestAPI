@@ -12,3 +12,10 @@ exports.verify = function(token){
         })
     })
 }
+
+
+// TODO: put up JWT protection - ask ChatGPT for steps to protect the API 
+//https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html
+//https://jwt.io/
+//https://book.hacktricks.xyz/pentesting-web/hacking-jwt-json-web-tokens
+//download jwt tool and see if your jwt can be decoded by any automatic tool

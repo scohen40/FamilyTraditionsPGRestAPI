@@ -1,78 +1,50 @@
-/* This code snippet is defining a Mongoose schema for a user in a Node.js application. Here's a
-breakdown of what each part of the code is doing: */
-const {Schema, model} = require('mongoose');
+const { Client } = require('pg');
+const bcrypt = require('bcryptjs');
 
-const {compare, genSalt, hash} = require('bcryptjs');
-const bcrypt = require('bcryptjs')
+const client = new Client({
+  host: 'localhost',
+  user: 'username',
+  password: 'password',
+  database: 'database'
+});
 
+client.connect();
 
-const userSchema = new Schema({
-    userId:{ 
-        type:Number, 
-        required:true, 
-        unique:true, 
-        trim:true},
-    username:{ 
-        type:String, 
-        required:[true, 'Username is required'], 
-        unique:true, 
-        trim:true },
-    password:{ 
-        type:String, 
-        required:[true, 'Password is required'], 
-        trim:true },
-    email:{
-        type:String,
-        required:[true, 'Email is required'],
-        unique:true,
-        trim:true,
-        match:[/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Email is not valid'],
-    },
-    firstName:{ 
-        type:String,
-        required:[true, 'First name is required'],
-        trim:true
-    },
-    lastName:{
-        type:String,
-        required:[true, 'Last name is required'],
-        trim:true
-    },
-    imageUrl:{
-        type:String,
-        default:'https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png',
-        match:[/^https?:\/\/.*/, 'URL is not valid']
-    },
-    isAdmin:{
-        type:Boolean,
-        default:false
-    },
-    isActive:{
-        type:Boolean,
-        required: true,
-        default:true
-    }
+async function createUserTable() {
+  const query = `
+  CREATE TABLE IF NOT EXISTS users (
+    user_id serial PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(254) UNIQUE NOT NULL CHECK (email ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'),
+    profile_image_url VARCHAR(255),
+    creation_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_login TIMESTAMPTZ CHECK (last_login IS NULL OR last_login >= creation_date)
+);
+  `;
 
-}, {timestamps:true});
-
-userSchema.pre('save', async function(next){
-    if (!this.isModified('password')) {
-        return next();
-    }
-    const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-})
-
-userSchema.methods.matchPassword = async function(enteredPassword){
-    // console.log(this);
-    // console.log('entered password');
-    // console.log(enteredPassword);
-    // console.log('this password');
-    // console.log(this.password);
-    // console.log(await compare(enteredPassword, this.password));
-    return await compare(enteredPassword, this.password);
-    
+  await client.query(query);
 }
 
-module.exports = model('User', userSchema);
+async function saveUser(user) {
+  const salt = await bcrypt.genSalt(12);
+  user.password = await bcrypt.hash(user.password, salt);
+
+  const query = `
+    INSERT INTO users (username, password, email, firstName, lastName)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+
+  const values = [user.username, user.password, user.email, user.firstName, user.lastName];
+
+  const result = await client.query(query, values);
+
+  return result.rows[0];
+}
+
+module.exports = {
+  createUserTable,
+  saveUser
+};

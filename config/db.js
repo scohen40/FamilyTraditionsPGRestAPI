@@ -1,15 +1,14 @@
-const {connect} = require('mongoose');
+const sql = require('./config');
 
-module.exports = async function(){
-    if (!process.env.MONGO_URI) {
-        console.error('MONGO_URI is not defined. Please check your environment variables.');
-        return;
-    }
-    try{
-        const res = await connect(process.env.MONGO_URI);
-        console.log(`DB connected: ${res.connection.host}`.yellow.underline);
-    }
-    catch(err){
-        console.log(`DB Not connected: ${err.message}`.red);
-    }
-}
+const query = async (text, params) => {
+  try {
+    return await sql.unsafe(text, params);
+  } catch (error) {
+    console.error('Database query error:', error);
+    throw error;
+  }
+};
+
+module.exports = {
+  query,
+};
